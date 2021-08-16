@@ -1,70 +1,111 @@
-# Getting Started with Create React App
+# EXPLANATION OF REACT REDUX
+## ACTION : object 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+```
+{
+  type:"increment_by_10"
+}
+```
 
-## Available Scripts
+## ACTION CREATOR: function to create an action
 
-In the project directory, you can run:
+```
+export const incNumberBy10=()=>{
+    return {
+        type:"increment_by_10"
+    }
+}
+```
+## REDUCER: function which takes "state" and "action" as argument and return "state" after implementing logic.  
 
-### `npm start`
+```
+const initialState = 10;
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+const changeTheNumberBy10 = (state = initialState, action) => {
+  switch (action.type) {
+    case "increment_by_10":
+      return state + 10;
+    case "decrement_by_10":
+      return state - 10;
+    case "multiply_by_10":
+      return state * 2;
+    default:
+      return state;
+  }
+};
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+export default changeTheNumberBy10;
 
-### `npm test`
+```
+## ROOT REDUCER: all reducers are combined to make root reducer
+```
+import changeTheNumberBy1 from "./changethenumby1";
+import changeTheNumberBy10 from "./changethenumby10";
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+import { combineReducers } from "redux";
 
-### `npm run build`
+const rootReducer = combineReducers({
+  changeTheNumberBy1,
+  changeTheNumberBy10,
+});
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+export default rootReducer;
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```
 
-### `npm run eject`
+## STORE: It brings "state","action" and "reducers" together
+## Redux app have only single store
+## Redux store has single root reducer function
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```
+import { createStore } from "redux";
+import rootReducer from "../reducers/index";
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+const store = createStore(
+  rootReducer,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+);
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+export default store;
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+```
+<img src="https://user-images.githubusercontent.com/56029421/129572087-ff7d586a-dc7d-4b39-a89c-ef90231c2317.jpg" width="600" height="400" />
 
-## Learn More
+## IMPLEMENTING REDUX
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  decNumberBy1,
+  incNumberBy1,
+  incNumberBy10,
+  decNumberBy10,
+  mulNumberBy10,
+} from "../actions/index";
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+function Home() {
+  const num1 = useSelector((state) => state.changeTheNumberBy1);
+  const num10 = useSelector((state) => state.changeTheNumberBy10);
+  const dispatch = useDispatch();
+  return (
+    <>
+      <button onClick={() => dispatch(decNumberBy1())}>-</button>
+      <span>num1 = {num1} </span>
+      <button onClick={() => dispatch(incNumberBy1())}>+</button>
 
-### Code Splitting
+      <br />
+      <br />
+      <br />
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+      <button onClick={() => dispatch(decNumberBy10())}>-</button>
+      <span>num10 = {num10} </span>
+      <button onClick={() => dispatch(incNumberBy10())}>+</button>
+    </>
+  );
+}
 
-### Analyzing the Bundle Size
+export default Home;
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
